@@ -57,15 +57,44 @@ class SettingsController extends Controller
                 return response()->json(['errors'=>'ayarlar bulunamadı'],404);
             }
         }catch(\Exception $e){
-            return response()->json(['errorrs'=>$e->getMessage()],500);
+            return response()->json(['errors'=>$e->getMessage()],500);
         }
 
 
     }
-    public function destroy($settings){
-        $settings->delete();
-        return redirect()->route('settings.index')->with('success','silindi');
+    public function delete(Request $request){
+        try{
+            $settings=Settings::where('id',$request->id)->first();
 
+            if($settings){
+                $settings->delete();
+                return response()->json(['success'=>'ayarlar silindi'],200);
+            }else{
+                return response()->json(['errors'=>'ayar bulunamadı'],404);
+            }
+        }catch(\Exception $e){
+            return response()->json(['errors'=>$e->getMessage()],500);
+        }
+    }
+    public function getByDetail(Request $request){
+        try{
+            $settings=Settings::where('id',$request->id)->first();
 
+            if($settings){
+                return response()->json(['settings'=>$settings],200);
+            }else{
+                return response()->json(['errors'=>'Ayar bilgisi bulunamaadı'],404);
+            }
+        }catch(\Exception $e){
+            return response()->json(['errors'=>$e->getMessage()],500);
+        }
+    }
+    public function getAll(){
+        try{
+            $settings=Settings::all();
+                return response()->json(['settings'=>$settings],200);
+        }catch(\Exception $e){
+            return response()->json(['errors'=>$e->getMessage()],500);
+        }
     }
 }

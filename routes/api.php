@@ -6,6 +6,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\JobsController;
 use App\Http\Controllers\StaffController;
+use App\Http\Controllers\SettingsController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -58,5 +59,12 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/delete', [StaffController::class, 'delete']);
         Route::get('/get', [StaffController::class, 'getByDetail']);
         Route::get('/get-all', [StaffController::class, 'getAll']);
+    });
+    Route::prefix('settings')->group(function () {
+        Route::post('/create', [SettingsController::class, 'create']);
+        Route::post('/update', [SettingsController::class, 'update']);
+        Route::post('/delete', [SettingsController::class, 'delete']);
+        Route::get('/get', [SettingsController::class, 'getByDetail']);
+        Route::get('/get-all', [SettingsController::class, 'getAll']);
     });
 });

@@ -61,7 +61,7 @@ class StaffController extends Controller
         try{
             $staff=Staff::where('id',$request->id)->first();
             if($staff){
-                return response()->json(['success'=>$staff],200);
+                return response()->json(['staff'=>$staff],200);
             }else{
                 return response()->json(['errors'=>'personel bulunamadı'],404);
             }
@@ -72,7 +72,7 @@ class StaffController extends Controller
     public function getAll(Request $request){
         try{
             $staff=Staff::all();
-            return response()->json(['success'=>$staff],200);
+            return response()->json(['staff'=>$staff],200);
         }catch(\Exception $e){
             return response()->json(['errors'=>$e->getMessage()],500);
         }

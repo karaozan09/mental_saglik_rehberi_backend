@@ -10,8 +10,8 @@ class UserController extends Controller
 {
     public function index()
     {
-        $users = User::all();
-        return view('users.index', compact('users'));
+        $user = User::all();
+        return view('user.index', compact('user'));
     }
 
     public function create(UserRequest $request)
@@ -69,7 +69,7 @@ class UserController extends Controller
         try{
             $user = User::where('id',$request->id)->first();
             if($user){
-                return response()->json(['success'=>$user],200);
+                return response()->json(['user'=>$user],200);
             }else{
                 return response()->json(['errors'=>'kullanıcı bulunamadı'],404);
             }
@@ -79,8 +79,8 @@ class UserController extends Controller
     }
     public function getAll(Request $request){
         try{
-            $users = User::all();
-            return response()->json(['success'=>$users],200);
+            $user = User::all();
+            return response()->json(['user'=>$user],200);
         }catch (\Exception $e){
             return response()->json(['errors'=>$e->getMessage()],500);
         }

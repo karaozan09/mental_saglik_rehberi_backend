@@ -76,7 +76,7 @@ class SocialMediaController extends Controller
     public function getAll(){
         try{
             $socialmedias=SocialMedia::all();
-            return response()->json(['socialmedias'=>$socialmedias],200);
+            return response()->json(['social_medias'=>$socialmedias],200);
         }catch(\Exception $e){
             return response()->json(['errors'=>$e->getMessage()],500);
         }

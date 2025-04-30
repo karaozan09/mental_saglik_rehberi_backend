@@ -56,7 +56,7 @@ class JobsController extends Controller
             $jobs=Jobs::where('id',$request->id)->first();
 
             if($jobs){
-                return response()->json(['success'=>$jobs],200);
+                return response()->json(['jobs'=>$jobs],200);
             }else{
                 return response()->json(['errors'=>'iş bilgisi bulunamadı'],404);
             }
@@ -67,7 +67,7 @@ class JobsController extends Controller
     public function getAll(Request $request){
         try{
             $jobs=Jobs::all();
-            return response()->json(['success'=>$jobs],200);
+            return response()->json(['jobs'=>$jobs],200);
         }catch (\Exception $e){
             return response()->json(['errors'=>$e->getMessage()],500);
         }
