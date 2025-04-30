@@ -1,0 +1,88 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Http\Requests\UserRequest;
+use Illuminate\Http\Request;
+use App\Models\User;
+
+class UserController extends Controller
+{
+    public function index()
+    {
+        $users = User::all();
+        return view('users.index', compact('users'));
+    }
+
+    public function create(UserRequest $request)
+    {
+       try{
+           User::create([
+               'id'=>$request->id,
+               'full_name'=>$request->full_name,
+               'email'=>$request->email,
+               'password'=>$request->password,
+               'phone_number'=>$request->phone_number,
+
+           ]);
+           return response()->json(['success'=>'Kullanıcı oluşturuldu'],201);
+       }catch (\Exception $e){
+           return response()->json(['errors'=>$e->getMessage()],500);
+       }
+    }
+    public function update(UserRequest $request){
+        try{
+            $user=User::where('id',$request->id)->first();
+
+            if($user){
+                $user->full_name=$request->full_name;
+                $user->email=$request->email;
+                $user->password=$request->password;
+                $user->phone_number=$request->phone_number;
+
+                $user->save();
+                return response()->json(['success'=>'güncelleme başarılı'],200);
+            }else{
+                return response()->json(['errors'=>'kullanıcı bulunamadı'],404);
+            }
+        }catch(\Exception $e){
+            return response()->json(['errors'=>$e->getMessage()],500);
+        }
+
+    }
+
+    public function delete(Request $request){
+        try{
+            $user = User::where('id',$request->id)->first();
+
+            if($user){
+                $user->delete();
+                return response()->json(['success'=>'kullanıcı silindi'],200);
+            }else{
+                return response()->json(['errors'=>'kullanıcı bulunamadı'],404);
+            }
+        }catch(\Exception $e){
+            return response()->json(['errors'=>$e->getMessage()],500);
+        }
+    }
+    public function getByDetail(Request $request){
+        try{
+            $user = User::where('id',$request->id)->first();
+            if($user){
+                return response()->json(['success'=>$user],200);
+            }else{
+                return response()->json(['errors'=>'kullanıcı bulunamadı'],404);
+            }
+        }catch(\Exception $e){
+            return response()->json(['errors'=>$e->getMessage()],500);
+        }
+    }
+    public function getAll(Request $request){
+        try{
+            $users = User::all();
+            return response()->json(['success'=>$users],200);
+        }catch (\Exception $e){
+            return response()->json(['errors'=>$e->getMessage()],500);
+        }
+    }
+}
