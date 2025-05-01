@@ -7,6 +7,7 @@ use App\Http\Controllers\ContactController;
 use App\Http\Controllers\JobsController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\SettingsController;
+use App\Http\Controllers\UserSettingsController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -21,11 +22,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 Route::post('/login', [AuthController::class, 'login'])->name('login');
+Route::post('user/create', [UserController::class, 'create']);
 Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('user')->group(function () {
-        Route::post('/create', [UserController::class, 'create']);
         Route::post('/update', [UserController::class, 'update']);
         Route::post('/archive', [UserController::class, 'archive']);
         Route::get('/get', [UserController::class, 'getByDetail']);
@@ -60,6 +61,11 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/get', [StaffController::class, 'getByDetail']);
         Route::get('/get-all', [StaffController::class, 'getAll']);
     });
+    Route::prefix('user-settings')->group(function () {
+        Route::post('/update-profil', [UserSettingsController::class, 'updateProfil']);
+        Route::post('/password-change', [UserSettingsController::class, 'passwordChange']);
+    });
+
     Route::prefix('settings')->group(function () {
         Route::post('/create', [SettingsController::class, 'create']);
         Route::post('/update', [SettingsController::class, 'update']);
