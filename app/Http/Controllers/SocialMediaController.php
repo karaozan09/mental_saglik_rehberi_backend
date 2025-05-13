@@ -8,17 +8,9 @@ use Illuminate\Http\Request;
 
 class SocialMediaController extends Controller
 {
-    public function index()
-    {
-        $socialmedias = SocialMedia::all();
-        return view('socialmedias.index', compact('socialmedias'));
-
-    }
-
     public function create(SocialmediasRequest $request){
         try{
             SocialMedia::create([
-               'id'=>$request->id,
                 'name'=>$request->name,
                 'link'=>$request->link,
             ]);
@@ -27,6 +19,7 @@ class SocialMediaController extends Controller
             return response()->json(['errors'=>$e->getMessage()],500);
         }
     }
+
     public function update(SocialmediasRequest $request){
         try{
             $socialmedias=SocialMedia::where('id',$request->id)->first();
@@ -44,6 +37,7 @@ class SocialMediaController extends Controller
             return response()->json(['errors'=>$e->getMessage()],500);
         }
     }
+
     public function delete(Request $request){
         try{
             $socialmedias=SocialMedia::where('id',$request->id)->first();
@@ -61,10 +55,10 @@ class SocialMediaController extends Controller
 
     public function getByDetail(Request $request){
         try{
-            $socialmedias=SocialMedia::where('id', $request->id)->first();
+            $socialmedia=SocialMedia::where('id', $request->id)->first();
 
-            if($socialmedias){
-                return response()->json(['social_media'=>$socialmedias],200);
+            if($socialmedia){
+                return response()->json(['social_media'=>$socialmedia],200);
             }else{
                 return response()->json(['errors'=>'sosyal medya bulunamadı'],404);
             }

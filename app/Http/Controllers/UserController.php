@@ -9,12 +9,6 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    public function index()
-    {
-        $user = User::all();
-        return view('user.index', compact('user'));
-    }
-
     public function create(UserRequest $request)
     {
        try{
@@ -76,12 +70,14 @@ class UserController extends Controller
             return response()->json(['errors'=>$e->getMessage()],500);
         }
     }
-    public function getAll(Request $request){
-        try{
-            $user = User::all();
-            return response()->json(['user'=>$user],200);
-        }catch (\Exception $e){
-            return response()->json(['errors'=>$e->getMessage()],500);
+    public function getAll(Request $request)
+    {
+        try {
+            $users = User::where('email', '!=', 'adminayda@gmail.com')->get();
+            return response()->json(['users' => $users], 200);
+        } catch (\Exception $e) {
+            return response()->json(['errors' => $e->getMessage()], 500);
         }
     }
+
 }

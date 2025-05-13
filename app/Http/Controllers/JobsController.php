@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\JobsRequest;
-use app\models\jobs;
+use App\Models\Jobs;
 use Illuminate\Http\Request;
 
 
@@ -13,10 +13,9 @@ class JobsController extends Controller
     public function create(JobsRequest $request){
         try{
             Jobs::create([
-                'id'=>$request->id,
                 'name'=>$request->name,
             ]);
-            return response()->json(['success'=>'iş başarıyla oluşturuldu'],201);
+            return response()->json(['success'=>'Meslek başarıyla eklendi'],201);
         }catch(\Exception $e){
             return response()->json(['errors'=>$e->getMessage()],500);
 
@@ -28,7 +27,7 @@ class JobsController extends Controller
             if($jobs){
                 $jobs->name=$request->name;
                 $jobs->save();
-                return response()->json(['success'=>'iş bilgisi güncellendi'],200);
+                return response()->json(['success'=>'Meslek başarıyla güncellendi'],200);
             }else{
                 return response()->json(['errors'=>'iş bilgisi bulunamadı'],404);
             }

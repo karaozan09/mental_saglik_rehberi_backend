@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('staff', function (Blueprint $table) {
             $table->id();
+            $table->string('img');
             $table->string('full_name');
             $table->unsignedBigInteger('job_id');
             $table->timestamps();

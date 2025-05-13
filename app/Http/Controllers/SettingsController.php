@@ -3,98 +3,188 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\SettingsRequest;
-use app\models\Settings;
+use App\Models\Contact;
+use App\Models\Settings;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class SettingsController extends Controller
 {
-    public function index()
+    public function logo(Request $request){
+        try{
+            $settings = Settings::first() ?? new Settings();
+            if ($request->hasFile('logo')) {
+                // Eski resmi sil
+                if ($settings->logo) {
+                    $oldPath = str_replace('storage/', 'public/', $settings->logo);
+                    Storage::delete($oldPath);
+                }
+
+                // Yeni resmi yükle
+                $file = $request->file('logo');
+                $fileName = 'logo_' . time() . '.' . $file->getClientOriginalExtension();
+                $file->storeAs('public/logo', $fileName);
+
+                $settings->logo = 'storage/logo/' . $fileName;
+            }
+            $settings->save();
+            return response()->json(['success'=>'Başarıyla güncellendi'],201);
+        }catch(\Exception $e){
+            return response()->json(['errors'=>$e->getMessage()],500);
+        }
+    }
+
+    public function homeProcess(Request $request)
     {
-        $settings = Settings::all();
-        return view('settings.index', compact('settings'));
+        try {
+            $settings = Settings::first() ?? new Settings();
+            // Resim alanları
+            $imageFields = [
+                'aim_img' => 'aim_img',
+                'purpose_img' => 'purpose_img',
+                'home_img' => 'home_img',
+            ];
 
-    }
-    public function create(SettingsRequest $request){
-        try{
-            Settings::create([
-                'id'=>$request->id,
-                'logo'=>$request->logo,
-                'home_image'=>$request->home_image,
-                'home_title'=>$request->home_title,
-                'home_text'=>$request->home_text,
-                'aim_title'=>$request->aim_title,
-                'aim_text'=>$request->aim_text,
-                'aim_image'=>$request->aim_image,
-                'purpose_image'=>$request->purpose_image,
-                'purpose_title'=>$request->purpose_title,
-                'purpose_subheading'=>$request->purpose_subheading,
-            ]);
-            return response()->json(['success'=>'ayarlar oluşturuldu'],201);
-        }catch(\Exception $e){
-            return response()->json(['errors'=>$e->getMessage()],500);
-        }
-    }
-    public function update(SettingsRequest $request){
-        try{
-            $settings = Settings::where('id',$request->id)->first();
+            foreach ($imageFields as $field => $folder) {
+                if ($request->hasFile($field)) {
+                    // Eski resmi sil
+                    if (!empty($settings->{$field})) {
+                        $oldPath = str_replace('storage/', 'public/', $settings->{$field});
+                        Storage::delete($oldPath);
+                    }
 
-            if($settings){
-                $settings->id=$request->id;
-                $settings->logo=$request->logo;
-                $settings->home_image=$request->home_image;
-                $settings->home_title=$request->home_title;
-                $settings->home_text=$request->home_text;
-                $settings->aim_title=$request->aim_title;
-                $settings->aim_text=$request->aim_text;
-                $settings->aim_image=$request->aim_image;
-                $settings->purpose_image=$request->purpose_image;
-                $settings->purpose_title=$request->purpose_title;
-                $settings->purpose_subheading=$request->purpose_subheading;
-
-                $settings->save();
-                return response()->json(['success'=>'güncelleme başarılı'],200);
-            }else{
-                return response()->json(['errors'=>'ayarlar bulunamadı'],404);
+                    // Yeni resmi yükle
+                    $file = $request->file($field);
+                    $fileName = $field . '_' . time() . '.' . $file->getClientOriginalExtension();
+                    $file->storeAs("public/{$folder}", $fileName);
+                    $settings->{$field} = "storage/{$folder}/{$fileName}";
+                }
             }
-        }catch(\Exception $e){
-            return response()->json(['errors'=>$e->getMessage()],500);
-        }
 
+            // Metin alanları
+            $textFields = [
+                'home_title', 'home_text', 'aim_title', 'aim_text',
+                'purpose_title', 'purpose_subheading_1', 'purpose_subheading_2',
+                'purpose_subheading_3', 'purpose_subheading_4'
+            ];
 
-    }
-    public function delete(Request $request){
-        try{
-            $settings=Settings::where('id',$request->id)->first();
-
-            if($settings){
-                $settings->delete();
-                return response()->json(['success'=>'ayarlar silindi'],200);
-            }else{
-                return response()->json(['errors'=>'ayar bulunamadı'],404);
+            foreach ($textFields as $field) {
+                if ($request->has($field)) {
+                    $settings->{$field} = $request->input($field);
+                }
             }
-        }catch(\Exception $e){
-            return response()->json(['errors'=>$e->getMessage()],500);
-        }
-    }
-    public function getByDetail(Request $request){
-        try{
-            $settings=Settings::where('id',$request->id)->first();
 
-            if($settings){
-                return response()->json(['settings'=>$settings],200);
-            }else{
-                return response()->json(['errors'=>'Ayar bilgisi bulunamaadı'],404);
+            $settings->save();
+            return response()->json(['success' => 'Başarıyla güncellendi'], 201);
+
+        } catch (\Exception $e) {
+            return response()->json(['errors' => $e->getMessage()], 500);
+        }
+    }
+
+    public function contact(Request $request){
+        try{
+            $contact = Contact::first() ?? new Contact();
+
+            $fields = [
+                'phone_number_1', 'phone_number_2',
+                'email_1', 'email_2',
+                'address_1', 'address_2'
+            ];
+
+            foreach ($fields as $field) {
+                if ($request->has($field)) {
+                    $contact->{$field} = $request->input($field);
+                }
             }
+            $contact->save();
+
+            return response()->json(['success'=>'Başarıyla güncellendi'],201);
         }catch(\Exception $e){
             return response()->json(['errors'=>$e->getMessage()],500);
         }
     }
+
+    public function contactEmail(Request $request){
+        try{
+            $contact = Contact::first() ?? new Contact();
+
+            if($request->contact_email){
+                $contact->contact_email = $request->contact_email;
+                $contact->save();
+            }
+
+            return response()->json(['success'=>'Başarıyla güncellendi'],201);
+        }catch(\Exception $e){
+            return response()->json(['errors'=>$e->getMessage()],500);
+        }
+    }
+
+    public function mapLocation(Request $request){
+        try{
+            $contact = Contact::first() ?? new Contact();
+
+            if($request->coordinates){
+                $contact->coordinates = $request->coordinates;
+            }
+            $contact->save();
+
+            return response()->json(['success'=>'Başarıyla güncellendi'],201);
+        }catch(\Exception $e){
+            return response()->json(['errors'=>$e->getMessage()],500);
+        }
+    }
+
+    public function footer(Request $request){
+        try{
+            $settings = Settings::first() ?? new Settings();
+
+            $fields = [
+                'footer_top_title', 'footer_top_text',
+                'footer_bottom_text'
+            ];
+
+            foreach ($fields as $field) {
+                if ($request->has($field)) {
+                    $settings->{$field} = $request->input($field);
+                }
+            }
+
+            $settings->save();
+
+            return response()->json(['success'=>'Başarıyla güncellendi'],201);
+        }catch(\Exception $e){
+            return response()->json(['errors'=>$e->getMessage()],500);
+        }
+    }
+
     public function getAll(){
         try{
-            $settings=Settings::all();
-                return response()->json(['settings'=>$settings],200);
+            $settings = Settings::first() ?? new Settings();
+            $contact = Contact::first() ?? new Contact();
+
+            if (!$settings->exists) {
+                $settings->save();
+            }
+            if (!$contact->exists) {
+                $contact->save();
+            }
+
+                return response()->json(['settings'=>$settings,'contact' => $contact],200);
         }catch(\Exception $e){
             return response()->json(['errors'=>$e->getMessage()],500);
         }
+    }
+    public function getLogo()
+    {
+        $settings = Settings::first() ?? new Settings();
+
+        if (!$settings->exists) {
+            $settings->save();
+        }
+
+        return response()->json([
+            'logo' => $settings->logo
+        ], 200);
     }
 }

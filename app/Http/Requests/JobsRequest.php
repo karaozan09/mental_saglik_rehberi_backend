@@ -20,7 +20,7 @@ class JobsRequest extends FormRequest
     }
     public function messages(){
         return[
-            'name.required'=>'iş isim alanı zorunludur',
+            'name.required'=>'Meslek adı alanı zorunludur',
         ];
     }
     protected function failedValidation(Validator $validator)

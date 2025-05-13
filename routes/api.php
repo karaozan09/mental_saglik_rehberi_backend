@@ -1,6 +1,9 @@
 <?php
 
+use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\SocialMediaController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ContactController;
@@ -25,10 +28,15 @@ Route::post('/login', [AuthController::class, 'login'])->name('login');
 Route::post('user/create', [UserController::class, 'create']);
 Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
 
+Route::get('home/get-settings', [HomeController::class, 'getSettings']);
+Route::get('home/get-logo', [HomeController::class, 'getLogo']);
+Route::get('home/get-staff', [HomeController::class, 'getStaff']);
+Route::get('home/get-social-media', [HomeController::class, 'getSocialMedia']);
+
 Route::middleware('auth:sanctum')->group(function () {
-    Route::prefix('user')->group(function () {
+    Route::prefix('users')->group(function () {
         Route::post('/update', [UserController::class, 'update']);
-        Route::post('/archive', [UserController::class, 'archive']);
+        Route::post('/delete', [UserController::class, 'delete']);
         Route::get('/get', [UserController::class, 'getByDetail']);
         Route::get('/get-all', [UserController::class, 'getAll']);
     });
@@ -67,10 +75,15 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     Route::prefix('settings')->group(function () {
-        Route::post('/create', [SettingsController::class, 'create']);
-        Route::post('/update', [SettingsController::class, 'update']);
-        Route::post('/delete', [SettingsController::class, 'delete']);
-        Route::get('/get', [SettingsController::class, 'getByDetail']);
+        Route::post('/logo', [SettingsController::class, 'logo']);
+        Route::post('/home-process', [SettingsController::class, 'homeProcess']);
+        Route::post('/contact', [SettingsController::class, 'contact']);
+        Route::post('/contact-email', [SettingsController::class, 'contactEmail']);
+        Route::post('/map-location', [SettingsController::class, 'mapLocation']);
+        Route::post('/footer', [SettingsController::class, 'footer']);
         Route::get('/get-all', [SettingsController::class, 'getAll']);
+        Route::get('/get-logo', [SettingsController::class, 'getLogo']);
     });
+
+    Route::get('/dashboard/statistics', [DashboardController::class, 'statistics']);
 });

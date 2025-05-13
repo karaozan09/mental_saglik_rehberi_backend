@@ -11,8 +11,8 @@ class Staff extends Model
     protected $table = 'staff';
     protected $guarded=[];
 
-    public function jobs()
+    public function job()
     {
-        return $this->belongsTo(Jobs::class, 'job_id');
+        return $this->belongsTo(Jobs::class);
     }
 }

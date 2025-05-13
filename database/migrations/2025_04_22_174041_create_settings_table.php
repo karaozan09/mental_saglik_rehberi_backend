@@ -13,16 +13,22 @@ return new class extends Migration
     {
         Schema::create('settings', function (Blueprint $table) {
             $table->id();
-            $table->string('logo');
-            $table->string('home_image');
-            $table->string('home_title');
-            $table->text('home_text');
-            $table->string('aim_title');
-            $table->text('aim_text');
-            $table->string('aim_image');
-            $table->string('purpose_image');
-            $table->string('purpose_title');
-            $table->string('purpose_subheading');
+            $table->string('logo')->nullable();
+            $table->string('home_img')->nullable();
+            $table->string('home_title')->nullable();
+            $table->text('home_text')->nullable();
+            $table->string('aim_title')->nullable();
+            $table->text('aim_text')->nullable();
+            $table->string('aim_img')->nullable();
+            $table->string('purpose_img')->nullable();
+            $table->string('purpose_title')->nullable();
+            $table->string('purpose_subheading_1')->nullable();
+            $table->string('purpose_subheading_2')->nullable();
+            $table->string('purpose_subheading_3')->nullable();
+            $table->string('purpose_subheading_4')->nullable();
+            $table->string('footer_top_title')->nullable();
+            $table->text('footer_top_text')->nullable();
+            $table->text('footer_bottom_text')->nullable();
 
             $table->timestamps();
         });
